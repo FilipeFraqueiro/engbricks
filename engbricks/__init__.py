@@ -5,29 +5,29 @@ import json
 # 
 # 
 mods = {
-    "Arithmetic":                  "engBricks_py_module.src.maths.arithmetic",
-    "Area":                        "engBricks_py_module.src.maths.areas",
-    "Probability":                 "engBricks_py_module.src.maths.probability",
-    "Trigonometry":                "engBricks_py_module.src.maths.trigonometry",
-    "Aircraft":                    "engBricks_py_module.src.aircraft_performance.performance_aircraft",
-    "Wing":                        "engBricks_py_module.src.aircraft_performance.performance_wing",
-    "Propulsion":                  "engBricks_py_module.src.aircraft_performance.performance_propulsion",
-    "Take-Off":                    "engBricks_py_module.src.aircraft_performance.performance_takeoff",
-    "Climb":                       "engBricks_py_module.src.aircraft_performance.performance_climb",
-    "Cruise":                      "engBricks_py_module.src.aircraft_performance.performance_cruise",
-    "Cruise Jet":                  "engBricks_py_module.src.aircraft_performance.performance_jet_cruise",
-    "Cruise Propeller":            "engBricks_py_module.src.aircraft_performance.performance_propeller_cruise",
-    "Landing":                     "engBricks_py_module.src.aircraft_performance.performance_landing",
-    "Glide":                       "engBricks_py_module.src.aircraft_performance.performance_glide",
-    "Turn":                        "engBricks_py_module.src.aircraft_performance.performance_turn",
-    "Looping":                     "engBricks_py_module.src.aircraft_performance.performance_looping",
-    "Structures Vibration":        "engBricks_py_module.src.structures.vibration",
-    "Second Moment of Area":       "engBricks_py_module.src.structures.second_moment_of_area",
-    "Composites":                  "engBricks_py_module.src.structures.composites",
-    "Astrodynamics":               "engBricks_py_module.src.astrodynamics",
-    "Jet Propulsion":              "engBricks_py_module.src.jet_propulsion",
-    "Atmosphere":                  "engBricks_py_module.src.atmosphere",
-    "User":                        "engBricks_py_module.src.user_equations"
+    "Arithmetic":                  "engbricks.src.maths.arithmetic",
+    "Area":                        "engbricks.src.maths.areas",
+    "Probability":                 "engbricks.src.maths.probability",
+    "Trigonometry":                "engbricks.src.maths.trigonometry",
+    "Aircraft":                    "engbricks.src.aircraft_performance.performance_aircraft",
+    "Wing":                        "engbricks.src.aircraft_performance.performance_wing",
+    "Propulsion":                  "engbricks.src.aircraft_performance.performance_propulsion",
+    "Take-Off":                    "engbricks.src.aircraft_performance.performance_takeoff",
+    "Climb":                       "engbricks.src.aircraft_performance.performance_climb",
+    "Cruise":                      "engbricks.src.aircraft_performance.performance_cruise",
+    "Cruise Jet":                  "engbricks.src.aircraft_performance.performance_jet_cruise",
+    "Cruise Propeller":            "engbricks.src.aircraft_performance.performance_propeller_cruise",
+    "Landing":                     "engbricks.src.aircraft_performance.performance_landing",
+    "Glide":                       "engbricks.src.aircraft_performance.performance_glide",
+    "Turn":                        "engbricks.src.aircraft_performance.performance_turn",
+    "Looping":                     "engbricks.src.aircraft_performance.performance_looping",
+    "Structures Vibration":        "engbricks.src.structures.vibration",
+    "Second Moment of Area":       "engbricks.src.structures.second_moment_of_area",
+    "Composites":                  "engbricks.src.structures.composites",
+    "Astrodynamics":               "engbricks.src.astrodynamics",
+    "Jet Propulsion":              "engbricks.src.jet_propulsion",
+    "Atmosphere":                  "engbricks.src.atmosphere",
+    "User":                        "engbricks.src.user_equations"
 }
 # 
 # 
@@ -113,7 +113,7 @@ def view_formula_latex(module_name:str, formula_name:str):
 
         # pprint(local_namespace["expr"], use_unicode=True)
 
-        formula_latex = sympy.latex(local_namespace["expr"])
+        formula_latex = latex(local_namespace["expr"])
         print(formula_latex)
 
         print()
@@ -158,57 +158,59 @@ class formulas_queue():
             print("[+] Error:", ex)
     # 
     # 
-    def print_formulas(self):
+    def print_formulas(self, default:bool=True):
         local_namespace = self.namespace.copy()
         print("-"*50)
 
         # print default
-        i = 0
-        for formula in self.formulas:
-            print(i, "-", formula[0], "-", formula[1])
+        if default:
+            i = 0
+            for formula in self.formulas:
+                print(i, "-", formula[0], "-", formula[1])
 
-            # create variables to create symbols
-            for variable in formula[3]:
-                aux = "{}=symbols('{}')".format(variable, variable)
+                # create variables to create symbols
+                for variable in formula[3]:
+                    aux = "{}=symbols('{}')".format(variable, variable)
+                    exec(aux, local_namespace)
+                
+                # create formula eq
+                aux = "expr = Eq({},{})".format(formula[2].split("=")[0].replace("^", "**"), formula[2].split("=")[1].replace("^", "**"))
                 exec(aux, local_namespace)
-            
-            # create formula eq
-            aux = "expr = Eq({},{})".format(formula[2].split("=")[0].replace("^", "**"), formula[2].split("=")[1].replace("^", "**"))
-            exec(aux, local_namespace)
 
-            # print formula
-            pprint(local_namespace["expr"], use_unicode=True)
-            print("-"*50)
-            i += 1
+                # print formula
+                pprint(local_namespace["expr"], use_unicode=True)
+                print("-"*50)
+                i += 1
 
         # print in order to solve_to
-        i = 0
-        for formula in self.formulas:
-            print(i, "-", formula[0], "-", formula[1])
+        else:
+            i = 0
+            for formula in self.formulas:
+                print(i, "-", formula[0], "-", formula[1])
 
-            # create variables to create symbols
-            for variable in formula[3]:
-                aux = "{}=symbols('{}')".format(variable, variable)
+                # create variables to create symbols
+                for variable in formula[3]:
+                    aux = "{}=symbols('{}')".format(variable, variable)
+                    exec(aux, local_namespace)
+                
+                # create symbol for solving variable
+                aux = "{}=symbols('{}')".format(formula[4], formula[4])
                 exec(aux, local_namespace)
-            
-            # create symbol for solving variable
-            aux = "{}=symbols('{}')".format(formula[4], formula[4])
-            exec(aux, local_namespace)
 
-            # create formula eq
-            aux = "expr = Eq({},{})".format(formula[2].split("=")[0].replace("^", "**"), formula[2].split("=")[1].replace("^", "**"))
-            exec(aux, local_namespace)
+                # create formula eq
+                aux = "expr = Eq({},{})".format(formula[2].split("=")[0].replace("^", "**"), formula[2].split("=")[1].replace("^", "**"))
+                exec(aux, local_namespace)
 
-            # solve Eq
-            results = sympy.solve(local_namespace["expr"], local_namespace[formula[4]])
+                # solve Eq
+                results = solve(local_namespace["expr"], local_namespace[formula[4]])
 
-            aux = "expr = Eq({},{})".format(formula[4], results[0])
-            exec(aux, local_namespace)
+                aux = "expr = Eq({},{})".format(formula[4], results[0])
+                exec(aux, local_namespace)
 
-            # print formula
-            pprint(local_namespace["expr"], use_unicode=True)
-            print("-"*50)
-            i += 1
+                # print formula
+                pprint(local_namespace["expr"], use_unicode=True)
+                print("-"*50)
+                i += 1
 
     # 
     # 
@@ -281,7 +283,7 @@ class formulas_queue():
             exec(aux, local_namespace)
 
             # solve Eq
-            results = sympy.solve(local_namespace["expr"], local_namespace[formula[4]], dict=True)
+            results = solve(local_namespace["expr"], local_namespace[formula[4]], dict=True)
             # print(results)
 
             # update variables dict
