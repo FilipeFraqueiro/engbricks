@@ -1,5 +1,5 @@
-from y import Eq, solve
-from y import sin, cos, tan, atan, ln, pi, sqrt
+from sympy import Eq, solve
+from sympy import sin, cos, tan, atan, ln, pi, sqrt
 # 
 # 
 # 

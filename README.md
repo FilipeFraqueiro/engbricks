@@ -35,4 +35,6 @@ q.add_formula("Arithmetic", "Subtraction")
 q.add_formula("Arithmetic", "Addition")
 
 q.print_formulas()
+
 q.print_variables()
+
