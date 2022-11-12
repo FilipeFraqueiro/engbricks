@@ -1,5 +1,5 @@
 # Engineering Bricks
-## Intalation
+## Instalation
 pip install engbricks
 
 ## Classes
@@ -7,9 +7,13 @@ formulas_queue
 
 ## Formulas
 list_all
+
 list_modules
+
 list_formulas
+
 view_formula
+
 view_formula_latex
 
 ## Usage
@@ -32,6 +36,7 @@ engbricks.view_formula_latex("Arithmetic", "Subtraction")
 q = engbricks.formulas_queue("Queue 1")
 
 q.add_formula("Arithmetic", "Subtraction")
+
 q.add_formula("Arithmetic", "Addition")
 
 q.print_formulas()
